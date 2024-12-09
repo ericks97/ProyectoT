@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "275394253007",
+    "project_id": "proyectotransporte-690ec",
+    "storage_bucket": "proyectotransporte-690ec.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:275394253007:android:7f264a6bea9f55ecb667ba",
+        "android_client_info": {
+          "package_name": "app.transporte.proyectot"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACafNGvq1ExgRii2tK1XjvkAbRWjFZxU8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:275394253007:android:12aad7c29f04b53cb667ba",
+        "android_client_info": {
+          "package_name": "app.transporte.transporteprivado"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACafNGvq1ExgRii2tK1XjvkAbRWjFZxU8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
