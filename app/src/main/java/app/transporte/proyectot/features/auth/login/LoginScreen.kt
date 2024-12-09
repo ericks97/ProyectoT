@@ -19,11 +19,22 @@ import androidx.compose.material3.Button
 import androidx.compose.ui.text.font.FontWeight
 
 @Composable
-fun LoginScreen(navigateToHome: () -> Unit, viewModel: LoginViewModel = viewModel()) {
+fun LoginScreen(navigateToSuperAdminScreen: () -> Unit, navigateToDriverScreen: () -> Unit, viewModel: LoginViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    // Esta parte controla la navegación después de iniciar sesión exitosamente
+    LaunchedEffect(uiState.success) {
+        if (uiState.success) {
+            when (uiState.role) {
+                "superadmin" -> navigateToSuperAdminScreen()
+                "driver" -> navigateToDriverScreen()
+                else -> {} // En caso de que el rol no sea reconocido
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -99,10 +110,7 @@ fun LoginScreen(navigateToHome: () -> Unit, viewModel: LoginViewModel = viewMode
             }
         }
 
-        if (uiState.success) {
-            navigateToHome()
-        }
-
         Spacer(modifier = Modifier.weight(1f))
     }
 }
+

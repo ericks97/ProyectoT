@@ -6,4 +6,14 @@ import kotlinx.serialization.Serializable
 object Login
 
 @Serializable
-object Home
+object Ride
+
+@Serializable
+object DayResume
+
+@Serializable
+object SuperAdmin
+
+@Serializable
+object Driver
+
