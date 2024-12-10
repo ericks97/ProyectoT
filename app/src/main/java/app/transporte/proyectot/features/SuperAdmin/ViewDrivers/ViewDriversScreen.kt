@@ -13,13 +13,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import app.transporte.proyectot.core.navigation.Driver
+import app.transporte.proyectot.core.model.Driver
 import app.transporte.proyectot.R
 
 
@@ -28,6 +30,11 @@ fun ViewDriversScreen(navController: NavController, viewModel: ViewDriversViewMo
     val navigateToAddDriver: () -> Unit = {
         navController.navigate("addDriversScreen")
     }
+
+    // Estado para mostrar el diálogo de confirmación
+    val showDeleteDialog = remember { mutableStateOf(false) }
+    val driverToDelete = remember { mutableStateOf<Driver?>(null) }
+
     // Llamar a viewDrivers() cuando la pantalla se cree
     LaunchedEffect(Unit) {
         viewModel.viewDrivers()  // Cargar los choferes
@@ -68,15 +75,34 @@ fun ViewDriversScreen(navController: NavController, viewModel: ViewDriversViewMo
         } else {
             LazyColumn {
                 items(driversList) { driver ->
-                    DriverItem(driver)
+                    DriverItem(driver, onDelete = {
+                        // Al hacer clic en eliminar, mostramos el popup
+                        driverToDelete.value = driver
+                        showDeleteDialog.value = true
+                    })
                 }
             }
         }
+
+        // Diálogo de confirmación de eliminación
+        if (showDeleteDialog.value) {
+            DeleteConfirmationDialog(
+                onConfirm = {
+                    // Ejecutar eliminación
+                    driverToDelete.value?.let { driver ->
+                        viewModel.deleteDriver(driver)
+                    }
+                    showDeleteDialog.value = false
+                },
+                onDismiss = {
+                    showDeleteDialog.value = false
+                }
+            )
+        }
     }
 }
-
 @Composable
-fun DriverItem(driver: Driver) {
+fun DriverItem(driver: Driver, onDelete: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -94,12 +120,14 @@ fun DriverItem(driver: Driver) {
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
-                Icon(
-                    painter = painterResource(id = R.drawable.bin),
-                    contentDescription = "Agregar Chofer",
-                    modifier = Modifier.size(30.dp),
-                    tint = Color.Black // Puedes cambiar el color del ícono
-                )
+                IconButton(onClick = onDelete) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.bin),
+                        contentDescription = "Eliminar Chofer",
+                        modifier = Modifier.size(30.dp),
+                        tint = Color.Black
+                    )
+                }
             }
 
             Text(
@@ -113,7 +141,7 @@ fun DriverItem(driver: Driver) {
                     // Acción para ver detalles del chofer o realizar alguna acción
                 },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Black)  // Botón negro
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
             ) {
                 Text(
                     text = "Ver detalles",
@@ -122,4 +150,32 @@ fun DriverItem(driver: Driver) {
             }
         }
     }
+}
+@Composable
+fun DeleteConfirmationDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(text = "Confirmación")
+        },
+        text = {
+            Text("¿Estás seguro que quieres eliminar a este usuario?")
+        },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+            ) {
+                Text("Sí", color = Color.White)
+            }
+        },
+        dismissButton = {
+            Button(
+                onClick = onDismiss,
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
+            ) {
+                Text("No", color = Color.White)
+            }
+        }
+    )
 }
