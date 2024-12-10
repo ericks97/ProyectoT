@@ -1,9 +1,7 @@
 package app.transporte.proyectot.features.SuperAdmin.ViewDrivers
 
 import ViewDriversViewModel
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,8 +14,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import app.transporte.proyectot.core.model.Driver
 import app.transporte.proyectot.R
+import com.airbnb.lottie.compose.*
+
 
 
 @Composable
@@ -40,6 +42,10 @@ fun ViewDriversScreen(navController: NavController, viewModel: ViewDriversViewMo
 
     // Estado para el mensaje de "¡Usuario eliminado!"
     val showSuccessMessage = remember { mutableStateOf(false) }
+
+    // Lottie animation for deletion (use your own Lottie file here)
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.delete_animation))
+    val progress by animateLottieCompositionAsState(composition)
 
     // Llamar a viewDrivers() cuando la pantalla se cree
     LaunchedEffect(Unit) {
@@ -107,18 +113,17 @@ fun ViewDriversScreen(navController: NavController, viewModel: ViewDriversViewMo
             )
         }
 
-        // Mostrar mensaje de "¡Usuario eliminado!" con animación
-        AnimatedVisibility(
-            visible = showSuccessMessage.value,
-            enter = fadeIn(),
-            exit = fadeOut(),
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(
-                text = "¡Usuario eliminado!",
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                color = Color.Green
-            )
+        // Animación Lottie de eliminación
+        if (showSuccessMessage.value) {
+            Column(modifier = Modifier.fillMaxWidth().padding(top = 16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                LottieAnimation(composition, progress, modifier = Modifier.size(150.dp))
+                Text(
+                    text = "¡Usuario eliminado!",
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                    color = Color.Green,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
         }
 
         // Después de 2 segundos, ocultar el mensaje
