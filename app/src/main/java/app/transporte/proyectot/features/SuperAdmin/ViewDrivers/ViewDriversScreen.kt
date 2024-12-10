@@ -82,16 +82,25 @@ fun DriverItem(driver: Driver) {
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
-        ) {
-            Text(
-                text = "Nombre: ${driver.name}",
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
+        Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Nombre: ${driver.name}",
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                Icon(
+                    painter = painterResource(id = R.drawable.bin),
+                    contentDescription = "Agregar Chofer",
+                    modifier = Modifier.size(30.dp),
+                    tint = Color.Black // Puedes cambiar el color del ícono
+                )
+            }
 
             Text(
                 text = "Email: ${driver.email}",
