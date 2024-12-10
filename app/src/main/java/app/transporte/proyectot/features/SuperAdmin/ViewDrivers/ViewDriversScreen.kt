@@ -1,6 +1,9 @@
 package app.transporte.proyectot.features.SuperAdmin.ViewDrivers
 
 import ViewDriversViewModel
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -34,6 +37,9 @@ fun ViewDriversScreen(navController: NavController, viewModel: ViewDriversViewMo
     // Estado para mostrar el diálogo de confirmación
     val showDeleteDialog = remember { mutableStateOf(false) }
     val driverToDelete = remember { mutableStateOf<Driver?>(null) }
+
+    // Estado para el mensaje de "¡Usuario eliminado!"
+    val showSuccessMessage = remember { mutableStateOf(false) }
 
     // Llamar a viewDrivers() cuando la pantalla se cree
     LaunchedEffect(Unit) {
@@ -93,11 +99,34 @@ fun ViewDriversScreen(navController: NavController, viewModel: ViewDriversViewMo
                         viewModel.deleteDriver(driver)
                     }
                     showDeleteDialog.value = false
+                    showSuccessMessage.value = true  // Mostrar mensaje de éxito
                 },
                 onDismiss = {
                     showDeleteDialog.value = false
                 }
             )
+        }
+
+        // Mostrar mensaje de "¡Usuario eliminado!" con animación
+        AnimatedVisibility(
+            visible = showSuccessMessage.value,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            Text(
+                text = "¡Usuario eliminado!",
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                color = Color.Green
+            )
+        }
+
+        // Después de 2 segundos, ocultar el mensaje
+        LaunchedEffect(showSuccessMessage.value) {
+            if (showSuccessMessage.value) {
+                kotlinx.coroutines.delay(2000)
+                showSuccessMessage.value = false
+            }
         }
     }
 }
