@@ -1,4 +1,4 @@
-package app.transporte.proyectot.features.ViewDrivers
+package app.transporte.proyectot.features.SuperAdmin.ViewDrivers
 
 import ViewDriversViewModel
 import androidx.compose.foundation.layout.*
