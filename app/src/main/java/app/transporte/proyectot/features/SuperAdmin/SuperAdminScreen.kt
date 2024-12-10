@@ -25,7 +25,7 @@ fun SuperAdminScreen(navController: NavController) {
     ) {
         // Título de la pantalla
         Text(
-            text = "Pantalla del Superadmin",
+            text = "Bienvenido, ¿Qué deseas hacer?",
             style = MaterialTheme.typography.headlineLarge,
             modifier = Modifier.padding(bottom = 32.dp)  // Espaciado debajo del título
         )
