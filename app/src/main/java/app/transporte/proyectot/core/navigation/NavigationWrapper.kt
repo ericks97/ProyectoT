@@ -14,8 +14,18 @@ fun NavigationWrapper() {
     NavHost(navController = navController, startDestination = "login") {
         composable("login") {
             LoginScreen(
-                navigateToSuperAdminScreen = { navController.navigate("superadmin") },
-                navigateToDriverScreen = { navController.navigate("driver") }
+                navigateToSuperAdminScreen = {
+                    // Navegar a SuperAdminScreen y eliminar la pantalla de login de la pila
+                    navController.navigate("superadmin") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                },
+                navigateToDriverScreen = {
+                    // Navegar a DriverScreen y eliminar la pantalla de login de la pila
+                    navController.navigate("driver") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                }
             )
         }
 

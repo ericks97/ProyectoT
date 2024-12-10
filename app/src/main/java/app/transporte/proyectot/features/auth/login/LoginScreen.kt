@@ -10,30 +10,58 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material3.Text
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Button
-import androidx.compose.ui.text.font.FontWeight
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-fun LoginScreen(navigateToSuperAdminScreen: () -> Unit, navigateToDriverScreen: () -> Unit, viewModel: LoginViewModel = viewModel()) {
+fun LoginScreen(navigateToSuperAdminScreen: () -> Unit, navigateToDriverScreen: () -> Unit, viewModel: LoginViewModel = viewModel() ){
     val uiState by viewModel.uiState.collectAsState()
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var showWelcomeDialog by remember { mutableStateOf(false) }
 
     // Esta parte controla la navegación después de iniciar sesión exitosamente
     LaunchedEffect(uiState.success) {
         if (uiState.success) {
-            when (uiState.role) {
-                "superadmin" -> navigateToSuperAdminScreen()
-                "driver" -> navigateToDriverScreen()
-                else -> {} // En caso de que el rol no sea reconocido
-            }
+            showWelcomeDialog = true // Muestra el popup de bienvenida
         }
+    }
+
+    // Dialogo de bienvenida
+    if (showWelcomeDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showWelcomeDialog = false
+                // Realiza la navegación después de que el usuario cierra el popup
+                when (uiState.role) {
+                    "superadmin" -> navigateToSuperAdminScreen()
+                    "driver" -> navigateToDriverScreen()
+                    else -> {} // En caso de que el rol no sea reconocido
+                }
+            },
+            title = { Text(text = "Bienvenido ${uiState.role?.capitalize()}") },
+            text = { Text(text = "Has iniciado sesión como ${uiState.role}") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showWelcomeDialog = false
+                        // Realiza la navegación después de que el usuario cierra el popup
+                        when (uiState.role) {
+                            "superadmin" -> navigateToSuperAdminScreen()
+                            "driver" -> navigateToDriverScreen()
+                            else -> {} // En caso de que el rol no sea reconocido
+                        }
+                    }
+                ) {
+                    Text("OK")
+                }
+            }
+        )
     }
 
     Column(
@@ -86,6 +114,7 @@ fun LoginScreen(navigateToSuperAdminScreen: () -> Unit, navigateToDriverScreen: 
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Mostrar el mensaje de error si es necesario
         uiState.errorMessage?.let {
             Text(
                 text = it,
@@ -113,4 +142,3 @@ fun LoginScreen(navigateToSuperAdminScreen: () -> Unit, navigateToDriverScreen: 
         Spacer(modifier = Modifier.weight(1f))
     }
 }
-
