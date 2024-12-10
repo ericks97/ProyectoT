@@ -74,5 +74,7 @@ data class LoginUiState(
     val success: Boolean = false,
     var errorMessage: String? = null,
     val uid: String? = null,
-    val role: String? = null // Propiedad para almacenar el rol del usuario
+    val role: String? = null, // Propiedad para almacenar el rol del usuario
+    val userName: String? = null // Propiedad para almacenar el nombre del usuario
+
 )

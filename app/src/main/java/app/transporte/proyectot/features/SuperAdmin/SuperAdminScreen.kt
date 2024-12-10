@@ -3,12 +3,14 @@ package app.transporte.proyectot.features.superadmin
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun SuperAdminScreen(navController: NavController) {
@@ -21,15 +23,28 @@ fun SuperAdminScreen(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        // Título de la pantalla
         Text(
-            text = "Bienvenido Superadministrador",
-            modifier = Modifier.padding(bottom = 16.dp)
+            text = "Pantalla del Superadmin",
+            style = MaterialTheme.typography.headlineLarge,
+            modifier = Modifier.padding(bottom = 32.dp)  // Espaciado debajo del título
         )
 
-        // Aquí puedes agregar funcionalidades adicionales específicas para Superadmin
+        // Botón para ver choferes
+        Button(
+            onClick = { navController.navigate("viewDriversScreen") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),  // Espaciado entre botones
+            colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = Color.Black)  // Botón negro
+        ) {
+            Text(
+                text = "Ver Choferes",
+                color = Color.White
+            )
+        }
 
-        Spacer(modifier = Modifier.height(20.dp))
-
+        // Botón para cerrar sesión
         Button(
             onClick = {
                 auth.signOut() // Cerrar sesión
@@ -37,9 +52,14 @@ fun SuperAdminScreen(navController: NavController) {
                     // Elimina las pantallas anteriores de la pila para evitar que el usuario regrese a ellas
                     popUpTo("login") { inclusive = true }
                 }
-            }
+            },
+            modifier = Modifier.fillMaxWidth(),  // Botón de ancho completo
+            colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = Color.Black)  // Botón negro
         ) {
-            Text(text = "Cerrar sesión")
+            Text(
+                text = "Cerrar sesión",
+                color = Color.White
+            )
         }
     }
 }

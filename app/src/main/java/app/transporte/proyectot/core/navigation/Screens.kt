@@ -14,6 +14,4 @@ object DayResume
 @Serializable
 object SuperAdmin
 
-@Serializable
-object Driver
 

@@ -1,5 +1,6 @@
 package app.transporte.proyectot.features.auth.login
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -14,11 +15,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Button
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-fun LoginScreen(navigateToSuperAdminScreen: () -> Unit, navigateToDriverScreen: () -> Unit, viewModel: LoginViewModel = viewModel() ){
+fun LoginScreen(
+    navigateToSuperAdminScreen: () -> Unit,
+    navigateToDriverScreen: () -> Unit,
+    viewModel: LoginViewModel = viewModel()
+) {
     val uiState by viewModel.uiState.collectAsState()
 
     var email by remember { mutableStateOf("") }
@@ -33,6 +38,7 @@ fun LoginScreen(navigateToSuperAdminScreen: () -> Unit, navigateToDriverScreen: 
     }
 
     // Dialogo de bienvenida
+    // Dialogo de bienvenida
     if (showWelcomeDialog) {
         AlertDialog(
             onDismissRequest = {
@@ -44,8 +50,18 @@ fun LoginScreen(navigateToSuperAdminScreen: () -> Unit, navigateToDriverScreen: 
                     else -> {} // En caso de que el rol no sea reconocido
                 }
             },
-            title = { Text(text = "Bienvenido ${uiState.role?.capitalize()}") },
-            text = { Text(text = "Has iniciado sesión como ${uiState.role}") },
+            title = {
+                Text(
+                    text = "Bienvenido, ${uiState.userName?.capitalize() ?: "Invitado"}",
+                    style = MaterialTheme.typography.titleLarge
+                )
+            },
+            text = {
+                Text(
+                    text = "Has iniciado sesión como ${uiState.role}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -127,7 +143,8 @@ fun LoginScreen(navigateToSuperAdminScreen: () -> Unit, navigateToDriverScreen: 
         Button(
             onClick = { viewModel.login(email, password) },
             modifier = Modifier.fillMaxWidth(),
-            enabled = !uiState.isLoading
+            enabled = !uiState.isLoading,
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Black)  // Botón negro
         ) {
             if (uiState.isLoading) {
                 CircularProgressIndicator(
@@ -135,7 +152,7 @@ fun LoginScreen(navigateToSuperAdminScreen: () -> Unit, navigateToDriverScreen: 
                     modifier = Modifier.size(20.dp)
                 )
             } else {
-                Text(text = "Iniciar Sesión")
+                Text(text = "Iniciar Sesión", color = Color.White)
             }
         }
 
