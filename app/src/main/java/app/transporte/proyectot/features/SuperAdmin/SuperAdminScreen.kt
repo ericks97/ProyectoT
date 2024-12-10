@@ -1,16 +1,20 @@
 package app.transporte.proyectot.features.superadmin
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
-import androidx.compose.ui.graphics.Color
 
 @Composable
 fun SuperAdminScreen(navController: NavController) {
@@ -40,6 +44,19 @@ fun SuperAdminScreen(navController: NavController) {
         ) {
             Text(
                 text = "Ver Choferes",
+                color = Color.White
+            )
+        }
+
+        Button(
+            onClick = { navController.navigate("rideScreen") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),  // Espaciado entre botones
+            colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = Color.Black)  // Botón negro
+        ) {
+            Text(
+                text = "Ver Traslados",
                 color = Color.White
             )
         }

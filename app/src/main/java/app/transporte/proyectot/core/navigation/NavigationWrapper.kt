@@ -1,5 +1,3 @@
-@file:Suppress("NAME_SHADOWING")
-
 package app.transporte.proyectot.core.navigation
 
 import androidx.compose.runtime.Composable
@@ -7,11 +5,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import app.transporte.proyectot.features.Ride.RideScreen
 import app.transporte.proyectot.features.SuperAdmin.ViewDrivers.ViewDriversScreen
 import app.transporte.proyectot.features.adddrivers.AddDriversScreen
 import app.transporte.proyectot.features.auth.login.LoginScreen
-import app.transporte.proyectot.features.superadmin.SuperAdminScreen
 import app.transporte.proyectot.features.driver.DriverScreen
+import app.transporte.proyectot.features.superadmin.SuperAdminScreen
 
 @Composable
 fun NavigationWrapper() {
@@ -48,6 +47,10 @@ fun NavigationWrapper() {
 
         composable("addDriversScreen") {
             AddDriversScreen(navController = navController, viewModel = viewModel())
+        }
+
+        composable("rideScreen"){
+            RideScreen(navController = navController)
         }
     }
 }
