@@ -18,7 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -176,7 +176,7 @@ fun RideItem(ride: Ride, onClick: () -> Unit, onDelete: () -> Job) {
             // Línea divisoria dependiendo del estado del traslado
             val lineColor = if (ride.completed) Color.Green else Color.Red
             Spacer(modifier = Modifier.height(4.dp))
-            Divider(color = lineColor, thickness = 2.dp)
+            HorizontalDivider(thickness = 2.dp, color = lineColor)
 
             Spacer(modifier = Modifier.height(8.dp))
 
