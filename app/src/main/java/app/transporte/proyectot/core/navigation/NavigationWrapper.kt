@@ -5,7 +5,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import app.transporte.proyectot.features.SuperAdmin.Traslados.RideScreen
+import app.transporte.proyectot.features.SuperAdmin.Ride.AddRideScreen
+import app.transporte.proyectot.features.SuperAdmin.Ride.RideScreen
 import app.transporte.proyectot.features.SuperAdmin.ViewDrivers.ViewDriversScreen
 import app.transporte.proyectot.features.adddrivers.AddDriversScreen
 import app.transporte.proyectot.features.auth.login.LoginScreen
@@ -51,6 +52,10 @@ fun NavigationWrapper() {
 
         composable("rideScreen"){
             RideScreen( viewModel = viewModel())
+        }
+
+        composable("addRideScreen"){
+            AddRideScreen()
         }
     }
 }

@@ -1,5 +1,6 @@
-package app.transporte.proyectot.features.SuperAdmin.Traslados
+package app.transporte.proyectot.features.SuperAdmin.Ride
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,7 +15,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -39,20 +39,20 @@ import app.transporte.proyectot.core.model.Ride
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RideScreen(
     viewModel: RideViewModel
 ) {
     val rides = viewModel.rides.value
-    val isLoading = viewModel.isLoading.value
     val error = viewModel.error.value
     val scope = rememberCoroutineScope()
     var selectedRide by remember { mutableStateOf<Ride?>(null) } // Estado para el traslado seleccionado
     var showDetailsDialog by remember { mutableStateOf(false) } // Estado para controlar la visualización del diálogo de detalles
 
     LaunchedEffect(Unit) {
-        viewModel.fetchRides()
+        viewModel.loadRides()
     }
 
     Scaffold(
@@ -60,6 +60,7 @@ fun RideScreen(
             TopAppBar(
                 title = { Text("Gestión de Traslados") },
             )
+
         }
     ) { paddingValues ->
         Box(
@@ -68,9 +69,7 @@ fun RideScreen(
                 .padding(paddingValues)
         ) {
             when {
-                isLoading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
+
                 !error.isNullOrEmpty() -> {
                     Text(
                         text = error,
@@ -140,6 +139,7 @@ fun RideItem(ride: Ride, onClick: () -> Unit, onDelete: () -> Job) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             // Muestra información básica del traslado
+            Text("Chofer: ${ride.driverName}", style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black))
             Text("Origen: ${ride.origin}", style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
             Spacer(modifier = Modifier.height(8.dp))
             Text("Destino: ${ride.destination}", style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
@@ -167,6 +167,7 @@ fun RideDetailsDialog(ride: Ride, onDismiss: () -> Unit) {
         },
         text = {
             Column {
+                Text("Chofer: ${ride.driverName}", style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black))
                 Text("Origen: ${ride.origin}", style = MaterialTheme.typography.bodyLarge.copy(color = Color.Black))
                 Text("Destino: ${ride.destination}", style = MaterialTheme.typography.bodyLarge.copy(color = Color.Black))
                 Text("Fecha: ${ride.date}", style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray))
