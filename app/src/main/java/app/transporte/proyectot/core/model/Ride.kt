@@ -11,7 +11,7 @@ data class Ride(
     val status: String = "",           // Estado del viaje (ej. Pendiente, En curso, Completado)
     val driverId: String = "",         // Identificador del conductor asignado al viaje
     val driverName: String = "",       // Nombre del conductor asignado
-    val passengers: List<Map<String, Any>> = emptyList(),  // Lista de pasajeros (cada uno representado por un objeto Passenger)
+    val passengers: List<Passenger> = emptyList(),  // Lista de pasajeros (cada uno representado por un objeto Passenger)
     val notes: String = "",            // Notas adicionales sobre el viaje
     val orderIndex: Int = 0,           // Índice para ordenar los viajes, útil para listas de viajes
     val completed: Boolean = false,    // Indica si el viaje está completado o no

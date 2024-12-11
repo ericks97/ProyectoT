@@ -56,7 +56,6 @@ class RideViewModel : ViewModel() {
                                     endTime = endTime,
                                     date = date,
                                     status = status,
-                                    passengers = passengers,
                                     // Puedes agregar más campos según sea necesario
                                 )
                             )

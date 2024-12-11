@@ -1,5 +1,6 @@
 package app.transporte.proyectot.features.SuperAdmin.Traslados
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,17 +11,24 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.transporte.proyectot.core.model.Ride
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,6 +48,8 @@ fun RideScreen(
     val isLoading = viewModel.isLoading.value
     val error = viewModel.error.value
     val scope = rememberCoroutineScope()
+    var selectedRide by remember { mutableStateOf<Ride?>(null) } // Estado para el traslado seleccionado
+    var showDetailsDialog by remember { mutableStateOf(false) } // Estado para controlar la visualización del diálogo de detalles
 
     LaunchedEffect(Unit) {
         viewModel.fetchRides()
@@ -92,6 +103,10 @@ fun RideScreen(
                         items(rides) { ride ->
                             RideItem(
                                 ride = ride,
+                                onClick = {
+                                    selectedRide = ride
+                                    showDetailsDialog = true
+                                },
                                 onDelete = {
                                     scope.launch {
                                         viewModel.deleteRide(ride)
@@ -103,54 +118,79 @@ fun RideScreen(
                 }
             }
         }
+        // Muestra el diálogo con los detalles del traslado cuando se selecciona un ítem
+        selectedRide?.let {
+            if (showDetailsDialog) {
+                RideDetailsDialog(ride = it, onDismiss = { showDetailsDialog = false })
+            }
+        }
+    }
+}
+
+
+@Composable
+fun RideItem(ride: Ride, onClick: () -> Unit, onDelete: () -> Job) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .clickable(onClick = onClick),
+        elevation = CardDefaults.elevatedCardElevation(4.dp),
+        shape = MaterialTheme.shapes.small
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            // Muestra información básica del traslado
+            Text("Origen: ${ride.origin}", style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Destino: ${ride.destination}", style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Fecha: ${ride.date}", style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Light, color = Color.Gray))
+
+            // Línea divisoria dependiendo del estado del traslado
+            val lineColor = if (ride.completed) Color.Green else Color.Red
+            Spacer(modifier = Modifier.height(4.dp))
+            Divider(color = lineColor, thickness = 2.dp)
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+        }
     }
 }
 
 @Composable
-fun RideItem(
-    ride: Ride,
-    onDelete: () -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text(
-                text = "Origen: ${ride.origin}",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "Destino: ${ride.destination}",
-                fontSize = 16.sp
-            )
-            Text(
-                text = "Chofer: ${ride.driverName}",
-                fontSize = 14.sp
-            )
-            Text(
-                text = "Fecha: ${ride.date}",
-                fontSize = 14.sp
-            )
-            Text(
-                text = "Estado: ${ride.status}",
-                fontSize = 14.sp
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(
-                onClick = onDelete,
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-                modifier = Modifier.align(Alignment.End)
-            ) {
-                Text(
-                    text = "Eliminar",
-                    color = Color.White
-                )
+fun RideDetailsDialog(ride: Ride, onDismiss: () -> Unit) {
+    // Muestra un diálogo con los detalles completos del traslado
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text("Detalles del Traslado", style = MaterialTheme.typography.titleLarge.copy(color = Color.Black))
+        },
+        text = {
+            Column {
+                Text("Origen: ${ride.origin}", style = MaterialTheme.typography.bodyLarge.copy(color = Color.Black))
+                Text("Destino: ${ride.destination}", style = MaterialTheme.typography.bodyLarge.copy(color = Color.Black))
+                Text("Fecha: ${ride.date}", style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray))
+                Text("Hora de inicio: ${ride.startTime}", style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray))
+                Text("Hora de fin: ${ride.endTime}", style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray))
+                Text("Notas: ${ride.notes}", style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray))
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Muestra la lista de pasajeros con su nombre y contacto
+                Text("Pasajeros:", style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black))
+                ride.passengers.forEach { passenger ->
+                    Text("  - ${passenger.name}", style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray))
+                    Text("    Contacto: ${passenger.phoneNumber}", style = MaterialTheme.typography.bodySmall.copy(color = Color.Gray))
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
-        }
-    }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Salir")
+            }
+        },
+        dismissButton = null // No hay botón de cierre adicional
+    )
 }
