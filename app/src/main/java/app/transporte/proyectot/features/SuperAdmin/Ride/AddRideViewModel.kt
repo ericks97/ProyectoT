@@ -3,9 +3,11 @@ package app.transporte.proyectot.features.SuperAdmin.Ride
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.transporte.proyectot.core.model.Ride
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class AddRideViewModel : ViewModel() {
     private val _ride = MutableStateFlow(Ride())
@@ -21,14 +23,25 @@ class AddRideViewModel : ViewModel() {
         loadDrivers()
     }
 
-    private fun loadDrivers() {
+    fun loadDrivers() {
         viewModelScope.launch {
-            // Simulación de carga desde backend
-            _drivers.value = listOf(
-                Driver("1", "Juan Pérez"),
-                Driver("2", "María López"),
-                Driver("3", "Carlos Sánchez")
-            )
+            val firestore = FirebaseFirestore.getInstance()
+            try {
+                val snapshot = firestore.collection("users")
+                    .whereEqualTo("role", "driver") // Filtrar solo usuarios con rol de conductor
+                    .get()
+                    .await()
+
+                val driverList = snapshot.documents.mapNotNull { doc ->
+                    val id = doc.id
+                    val name = doc.getString("driverName") // Asegúrate de que este campo exista en tu colección
+                    if (name != null) Driver(id, name) else null
+                }
+                _drivers.value = driverList
+            } catch (e: Exception) {
+                // Manejo de errores (por ejemplo, mostrar un mensaje de error en logs o a los usuarios)
+                e.printStackTrace()
+            }
         }
     }
 

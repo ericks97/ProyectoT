@@ -77,7 +77,7 @@ fun AddRideScreen(viewModel: AddRideViewModel = viewModel()) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = if (ride.driverName.isNotEmpty()) ride.driverName else "Seleccionar Conductor",
+                text = ride.driverName.ifEmpty { "Seleccionar Conductor" },
                 modifier = Modifier.weight(1f).padding(end = 8.dp)
             )
             Icon(Icons.Default.ArrowDropDown, contentDescription = null)
@@ -90,7 +90,7 @@ fun AddRideScreen(viewModel: AddRideViewModel = viewModel()) {
                         text = driver.name,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { viewModel.selectDriver(driver) }
+                            .clickable { viewModel.loadDrivers() }
                             .padding(8.dp)
                     )
                     Divider()
