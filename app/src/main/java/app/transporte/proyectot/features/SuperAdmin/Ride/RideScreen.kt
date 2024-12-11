@@ -1,10 +1,12 @@
 package app.transporte.proyectot.features.SuperAdmin.Ride
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,14 +19,11 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -46,13 +45,13 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 @SuppressLint("StateFlowValueCalledInComposition")
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun RideScreen(
     navController: NavController, viewModel: RideViewModel
 ) {
     val navigateToAddRide: () -> Unit = {
-        navController.navigate("addDriversScreen")
+        navController.navigate("addRideScreen")
     }
     val rides = viewModel.rides.value
     val error = viewModel.error.value
@@ -64,29 +63,38 @@ fun RideScreen(
         viewModel.loadRides()
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Gestión de Traslados") },
+    Column(modifier = Modifier.fillMaxSize()) {
+        // Barra superior personalizada
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White)
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Gestión de Traslados",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f)
             )
             IconButton(onClick = navigateToAddRide) {
                 Icon(
                     painter = painterResource(id = R.drawable.plusicon),
-                    contentDescription = "Agregar Chofer",
+                    contentDescription = "Agregar Traslado",
                     modifier = Modifier.size(30.dp),
-                    tint = Color.Black // Puedes cambiar el color del ícono
+                    tint = Color.Black // Color del ícono
                 )
             }
-
         }
-    ) { paddingValues ->
+
+        // Contenido principal
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(16.dp)
         ) {
             when {
-
                 !error.isNullOrEmpty() -> {
                     Text(
                         text = error,
@@ -95,6 +103,7 @@ fun RideScreen(
                         fontSize = 16.sp
                     )
                 }
+
                 rides.isEmpty() -> {
                     Text(
                         text = "No hay traslados disponibles.",
@@ -103,15 +112,15 @@ fun RideScreen(
                         color = Color.Gray
                     )
                 }
+
                 else -> {
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize().padding(16.dp),
+                        modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         item {
                             Text(
                                 text = "Total de traslados: ${rides.size}",
-                                modifier = Modifier.padding(16.dp),
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -133,11 +142,12 @@ fun RideScreen(
                     }
                 }
             }
-        }
-        // Muestra el diálogo con los detalles del traslado cuando se selecciona un ítem
-        selectedRide?.let {
-            if (showDetailsDialog) {
-                RideDetailsDialog(ride = it, onDismiss = { showDetailsDialog = false })
+
+            // Diálogo con los detalles del traslado
+            selectedRide?.let {
+                if (showDetailsDialog) {
+                    RideDetailsDialog(ride = it, onDismiss = { showDetailsDialog = false })
+                }
             }
         }
     }
