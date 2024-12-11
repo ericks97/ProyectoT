@@ -51,7 +51,7 @@ fun NavigationWrapper() {
         }
 
         composable("rideScreen"){
-            RideScreen( viewModel = viewModel())
+            RideScreen( navController = navController, viewModel = viewModel())
         }
 
         composable("addRideScreen"){
